@@ -1,0 +1,20 @@
+---
+- name: apt-update
+  become: true
+  hosts: all
+  vars:
+    - ubuntu_dist_for_nvidia_cuda: "{{ ansible_distribution_version | regex_replace('\\.', '')}}"
+  tasks:
+    - name: 基本パッケージをインストール
+      apt:
+        name:
+          - git
+          - vim
+          - language-pack-ja
+          - mosh
+        state: present
+        update_cache: yes
+  roles:
+    - pyenv
+    - nvidia
+    - nvidia-docker

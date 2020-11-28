@@ -1,0 +1,24 @@
+---
+- name: install pgp
+  apt:
+    name: gnupg
+    state: present
+    update_cache: yes
+- name: add nvidia-driver registory key
+  apt_key:
+    url: http://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ubuntu_dist_for_nvidia_cuda }}/{{ ansible_architecture }}/7fa2af80.pub
+    state: present
+
+- name: add nvidia-driver repository source
+  apt_repository:
+    repo: deb https://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ubuntu_dist_for_nvidia_cuda }}/{{ ansible_architecture }} /
+    state: present
+    update_cache: no
+    filename: nvidia-cuda
+
+- name: install nvidia-driver
+  apt:
+#    name: [nvidia-driver-455, nvidia-utils-450, cuda-drivers-450]
+    name: [nvidia-driver-455, nvidia-utils-455, cuda-drivers-455]
+    state: present
+    update_cache: yes

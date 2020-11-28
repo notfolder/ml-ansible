@@ -1,0 +1,42 @@
+- name: uninstall libssl-dev
+  apt:
+    name: libssl-dev
+    state: absent
+- name: install build packages
+  apt:
+    name:
+      - build-essential
+      - libffi-dev
+      - libssl1.0-dev
+      - zlib1g-dev
+      - liblzma-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - libssl1.0-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - git
+    state: present
+    update_cache: yes
+- name: pyenv git clone
+  git:
+    repo: https://github.com/pyenv/pyenv.git
+    dest: /home/notfolder/.pyenv
+  become: no
+- name: pyenv-virtualenv git clone
+  git:
+    repo: https://github.com/pyenv/pyenv-virtualenv.git
+    dest: /home/notfolder/.pyenv/plugins/pyenv-virtualenv
+  become: no
+- name: add .bashrc
+  lineinfile:
+    dest: /home/notfolder/.bashrc
+    line: "{{ item }}"
+  with_items:
+    - 'export PYENV_ROOT="$HOME/.pyenv"'
+    - 'export PATH="$PYENV_ROOT/bin:$PATH"'
+    - 'eval "$(pyenv init -)"'
+    - 'eval "$(pyenv virtualenv-init -)"'
+  become: no
