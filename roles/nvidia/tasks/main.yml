@@ -14,11 +14,40 @@
     repo: deb https://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ubuntu_dist_for_nvidia_cuda }}/{{ ansible_architecture }} /
     state: present
     update_cache: no
-    filename: nvidia-cuda
+    filename: cuda
 
-- name: install nvidia-driver
+- name: add nvidia-ml repository source
+  apt_repository:
+    repo: deb https://developer.download.nvidia.com/compute/machine-learning/repos/{{ ansible_distribution | lower }}{{ ubuntu_dist_for_nvidia_cuda }}/{{ ansible_architecture }} /
+    state: present
+    update_cache: no
+    filename: nvidia-ml
+
+- name: install nvidia-pkgs
   apt:
 #    name: [nvidia-driver-455, nvidia-utils-450, cuda-drivers-450]
-    name: [nvidia-driver-455, nvidia-utils-455, cuda-drivers-455]
+#    name: [nvidia-driver-455, nvidia-utils-455, cuda-drivers-455,nvidia-cuda-toolkit,nvidia-cuda-dev,libcudnn8,libcudnn8-dev]
+    name: [cuda-cudart-11-1=11.1.74-1,cuda-compat-11-1,cuda-libraries-11-1=11.1.1-1,libnpp-11-1=11.1.2.301-1,cuda-nvtx-11-1=11.1.74-1,libcublas-11-1=11.3.0.106-1,libnccl2=2.7.8-1+cuda11.1,
+          cuda-nvml-dev-11-1=11.1.74-1,cuda-command-line-tools-11-1=11.1.1-1,cuda-nvprof-11-1=11.1.105-1,libnpp-dev-11-1=11.1.2.301-1,cuda-libraries-dev-11-1=11.1.1-1,cuda-minimal-build-11-1=11.1.1-1,libnccl-dev=2.7.8-1+cuda11.1,libcublas-dev-11-1=11.3.0.106-1,libcusparse-11-1=11.3.0.10-1,libcusparse-dev-11-1=11.3.0.10-1,
+          libcudnn8=8.0.4.30-1+cuda11.1,libcudnn8-dev=8.0.4.30-1+cuda11.1]
     state: present
     update_cache: yes
+
+- name: create symbolic link
+  file:
+    src: /usr/local/cuda-11.1
+    dest: /usr/local/cuda
+    state: link
+
+- name: touch nvidia.conf
+  file:
+    dest: /etc/ld.so.conf.d/nvidia.conf
+    state: touch
+
+- name: add nvidia.conf
+  lineinfile:
+    dest: /etc/ld.so.conf.d/nvidia.conf
+    line: "{{ item }}"
+  with_items:
+    - '/usr/local/nvidia/lib'
+    - '/usr/local/nvidia/lib64'
