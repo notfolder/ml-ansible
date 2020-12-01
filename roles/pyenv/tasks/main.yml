@@ -23,16 +23,16 @@
 - name: pyenv git clone
   git:
     repo: https://github.com/pyenv/pyenv.git
-    dest: /home/notfolder/.pyenv
+    dest: '/home/{{ ansible_user }}/.pyenv'
   become: no
 - name: pyenv-virtualenv git clone
   git:
     repo: https://github.com/pyenv/pyenv-virtualenv.git
-    dest: /home/notfolder/.pyenv/plugins/pyenv-virtualenv
+    dest: '/home/{{ ansible_user }}/.pyenv/plugins/pyenv-virtualenv'
   become: no
 - name: add .bashrc
   lineinfile:
-    dest: /home/notfolder/.bashrc
+    dest: '/home/{{ ansible_user }}/.bashrc'
     line: "{{ item }}"
   with_items:
     - 'export PYENV_ROOT="$HOME/.pyenv"'
